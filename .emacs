@@ -42,6 +42,7 @@
         haml-mode
         haskell-mode
         inf-ruby
+        key-chord
         linum-relative
         log4e
         magit
@@ -99,8 +100,10 @@
 (require 'evil)
 (evil-mode 1)
 
-;; Escape to normal mode: jk
-(define-key evil-insert-state-map "jk" 'evil-normal-state)
+;; Escape to normal mode by "jk" (using key-chord lib)
+(setq key-chord-two-keys-delay 0.5)
+(key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
+(key-chord-mode 1)
 
 ;; Relative line numbers
 (require 'linum-relative)
