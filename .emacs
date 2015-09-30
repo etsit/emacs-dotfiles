@@ -1,7 +1,7 @@
 ;; -*- lexical-binding: t -*-
 
 ;;;; -----
-;;;; Libs
+;;;; Libraries
 
 (require 'cl-lib)
 
@@ -11,7 +11,7 @@
 ;; (Homebrew installation)
 ;; Add the following to your init file to have packages installed by
 ;; Homebrew added to your load-path:
-(let ((default-directory "/usr/local/share/emacs/site-lisp/"))
+(let ((default-directory "C:\Program Files\emacs-24.5-bin-i686-mingw32\share\emacs\site-lisp"))
     (normal-top-level-add-subdirs-to-load-path))
 
 ;;;; -----
@@ -86,8 +86,8 @@
 ; (global-visual-line-mode 1) ; 1 for on, 0 for off.
 
 ;; Window size and position
-(when window-system (set-frame-size (selected-frame) 120 60))
-(when window-system (set-frame-position (selected-frame) 1970 75))
+(when window-system (set-frame-size (selected-frame) 120 50))
+(when window-system (set-frame-position (selected-frame) 500 50))
 
 ;; Don't open new frame (window)
 (setq ns-pop-up-frames nil)
