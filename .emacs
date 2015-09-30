@@ -118,6 +118,10 @@
 (global-set-key "\C-cc" 'org-capture)
 (global-set-key "\C-cb" 'org-iswitchb)
 
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+  '((python . t)))
+
 ;;;; -----
 ;;;; Powerline package
 
