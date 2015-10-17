@@ -80,6 +80,16 @@
 ;;;; -----
 ;;;; Misc
 
+;; Tabs
+; Tab character distance in spaces
+(setq-default tab-width 2)
+(setq-default evil-shift-width 2)
+; Spaces instead of tabs
+(setq-default indent-tabs-mode nil)
+; Make CC-mode have equal tab distance as tab-width
+(defvaralias 'c-basic-offset 'tab-width)
+; Add alias for other modes to make tab distances consistent
+
 ;; Visual line mode
 (add-hook 'text-mode-hook 'turn-on-visual-line-mode)
 (setq visual-line-fringe-indicators '(left-curly-arrow right-curly-arrow))
