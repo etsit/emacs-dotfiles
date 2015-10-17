@@ -1,7 +1,7 @@
 ;; -*- lexical-binding: t -*-
 
 ;;;; -----
-;;;; Libs
+;;;; Libraries
 
 (require 'cl-lib)
 
@@ -98,6 +98,8 @@
 ;; Window size and position
 (when window-system (set-frame-size (selected-frame) 120 60))
 (when window-system (set-frame-position (selected-frame) 1970 75))
+;(when window-system (set-frame-size (selected-frame) 120 50))
+;(when window-system (set-frame-position (selected-frame) 500 50))
 
 ;; Don't open new frame (window)
 (setq ns-pop-up-frames nil)
