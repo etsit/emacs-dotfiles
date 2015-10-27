@@ -4,17 +4,21 @@ Personal Emacs configuration
 Installation
 ------------
 
-Clone Git repo in ~/.vim
+### Clone repo
 ```
 git clone https://github.com/etsit/emacs-dotfiles
 ```
 
-Copy .emacs to your HOME folder
+### On Linux / OS X
 ```
-cp emacs-dotfiles/.emacs ~
+ln -sv emacs-dotfiles/.emacs ~/.emacs
 ```
 
-Adjust the following settings to your system and preferences
+### On Windows
+1. Copy emacs-dotfiles\.emacs to your user's home folder
+2. Set HOME environment variable to point to your user's home folder
+
+### Adjust the following settings to your system and preferences
 - Scripts location: default-directory 
 - Window size and position:
   - set-frame-size
