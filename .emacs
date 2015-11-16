@@ -31,9 +31,12 @@
 
 (defvar prelude-packages
     '(auto-complete 
+        alchemist ; Elixir
         auto-complete-pcmp
         clojure-mode
         coffee-mode
+        elixir-mix
+        elixir-mode
         evil
         evil-nerd-commenter
         evil-org
@@ -49,6 +52,7 @@
         log4e
         magit
         markdown-mode
+        ob-elixir
         org-ac
         popup
         powerline
@@ -99,7 +103,7 @@
 
 ;; Window size and position
 (when window-system (set-frame-size (selected-frame) 120 60))
-(when window-system (set-frame-position (selected-frame) 1970 75))
+(when window-system (set-frame-position (selected-frame) 550 75))
 ;(when window-system (set-frame-size (selected-frame) 120 50))
 ;(when window-system (set-frame-position (selected-frame) 500 50))
 
@@ -135,6 +139,10 @@
 (org-babel-do-load-languages
  'org-babel-load-languages
   '((python . t)))
+
+;; Store clock across Emacs sessions
+(setq org-clock-persist 'history)
+(org-clock-persistence-insinuate)
 
 ;;;; -----
 ;;;; Powerline package
