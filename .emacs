@@ -149,3 +149,10 @@
 
 (require 'powerline)
 (powerline-default-theme)
+
+
+;;;; -----
+;;;; custom.el
+
+(setq custom-file "~/.emacs-custom.el")
+(load custom-file)
