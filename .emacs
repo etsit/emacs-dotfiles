@@ -140,44 +140,35 @@
  'org-babel-load-languages
  '((python . t)))
 
-;; org-agenda-files set from list of files
-;; taken from:
-;; From http://www.emacswiki.org/emacs/ElispCookbook#toc58
-(defun directory-dirs (dir)
-  "Find all directories in DIR."
-  (unless (file-directory-p dir)
-    (error "Not a directory `%s'" dir))
-  (let ((dir (directory-file-name dir))
-        (dirs '())
-        (files (directory-files dir nil nil t)))
-    (dolist (file files)
-      (unless (member file '("." ".."))
-        (let ((file (concat dir "/" file)))
-          (when (file-directory-p file)
-            (setq dirs (append (cons file
-                                     (directory-dirs file))
-                               dirs))))))
-    dirs))
+;; /////
+;; Automatically set variable org-agenda-files
+;; Taken from http://www.emacswiki.org/emacs/ElispCookbook#toc58
 
-
-(setq my-org-agenda-root "~/temp")
-(setq my-org-agenda-files-list "~/.emacs.d/org-agenda-list.el")
-
-(defun my-update-org-agenda-files ()
-  "Create or update the `my-org-agenda-files-list' file.
-  This file contains elisp code to set `org-agenda-files' to a
-  recursive list of all children under `my-org-agenda-root'. "
-  (interactive)
-  (message "agenda file list updated"
-    (with-temp-buffer
-      (insert
-      ";; Warning: this file has been automatically generated\n"
-      ";; by `my-update-org-agenda-files'\n")
-      (let ((dir-list (directory-dirs my-org-agenda-root))
-            (print-level nil)
-            (print-length nil))
-        (cl-prettyprint `(setq org-agenda-files (quote ,dir-list))))
-      (write-file my-org-agenda-files-list))))
+;; Collect all .org from my Org directory and subdirs
+;; The following code works well in emacs 24.3+
+;; "It does not require intermediate files creation
+(setq org-agenda-file-regexp "\\`[^.].*\\.org\\'") ; default value
+(defun load-org-agenda-files-recursively (dir) "Find all directories in DIR."
+    (unless (file-directory-p dir) (error "Not a directory `%s'" dir))
+    (unless (equal (directory-files dir nil org-agenda-file-regexp t) nil)
+      (add-to-list 'org-agenda-files dir)
+    )
+    (dolist (file (directory-files dir nil nil t))
+        (unless (member file '("." ".."))
+            (let ((file (concat dir file "/")))
+                (when (file-directory-p file)
+                    (load-org-agenda-files-recursively file)
+                )
+            )
+        )
+    )
+)
+(load-org-agenda-files-recursively "~/temp/" ) ; NOTE! trailing slash required
+;; To be able to refile to any file found add this:
+(setq org-refile-targets
+      '((nil :maxlevel . 3)
+        (org-agenda-files :maxlevel . 1)))
+;; /////
 
 ;; Store clock across Emacs sessions
 (setq org-clock-persist 'history)
