@@ -138,7 +138,46 @@
 
 (org-babel-do-load-languages
  'org-babel-load-languages
-  '((python . t)))
+ '((python . t)))
+
+;; org-agenda-files set from list of files
+;; taken from:
+;; From http://www.emacswiki.org/emacs/ElispCookbook#toc58
+(defun directory-dirs (dir)
+  "Find all directories in DIR."
+  (unless (file-directory-p dir)
+    (error "Not a directory `%s'" dir))
+  (let ((dir (directory-file-name dir))
+        (dirs '())
+        (files (directory-files dir nil nil t)))
+    (dolist (file files)
+      (unless (member file '("." ".."))
+        (let ((file (concat dir "/" file)))
+          (when (file-directory-p file)
+            (setq dirs (append (cons file
+                                     (directory-dirs file))
+                               dirs))))))
+    dirs))
+
+
+(setq my-org-agenda-root "~/temp")
+(setq my-org-agenda-files-list "~/.emacs.d/org-agenda-list.el")
+
+(defun my-update-org-agenda-files ()
+  "Create or update the `my-org-agenda-files-list' file.
+  This file contains elisp code to set `org-agenda-files' to a
+  recursive list of all children under `my-org-agenda-root'. "
+  (interactive)
+  (message "agenda file list updated"
+    (with-temp-buffer
+      (insert
+      ";; Warning: this file has been automatically generated\n"
+      ";; by `my-update-org-agenda-files'\n")
+      (let ((dir-list (directory-dirs my-org-agenda-root))
+            (print-level nil)
+            (print-length nil))
+        (cl-prettyprint `(setq org-agenda-files (quote ,dir-list))))
+      (write-file my-org-agenda-files-list))))
 
 ;; Store clock across Emacs sessions
 (setq org-clock-persist 'history)
