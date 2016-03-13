@@ -61,6 +61,7 @@
         sass-mode
         scss-mode
         solarized-theme
+        unbound
         undo-tree
         web-mode
         yaml-mode
@@ -140,8 +141,10 @@
  'org-babel-load-languages
  '((python . t)))
 
-;; /////
-;; Automatically set variable org-agenda-files
+;; Let marking as DONE insert CLOSED timestamp
+(setq org-log-done 'time)
+
+;; ///// Automatically set variable org-agenda-files
 ;; Taken from http://www.emacswiki.org/emacs/ElispCookbook#toc58
 
 ;; Collect all .org from my Org directory and subdirs
@@ -163,16 +166,18 @@
         )
     )
 )
-(load-org-agenda-files-recursively "~/temp/" ) ; NOTE! trailing slash required
+(load-org-agenda-files-recursively "~/emacs-playground/" ) ; NOTE! trailing slash required
 ;; To be able to refile to any file found add this:
 (setq org-refile-targets
       '((nil :maxlevel . 3)
         (org-agenda-files :maxlevel . 1)))
 ;; /////
 
+
 ;; Store clock across Emacs sessions
 (setq org-clock-persist 'history)
 (org-clock-persistence-insinuate)
+
 
 ;;;; -----
 ;;;; Powerline package
@@ -186,3 +191,64 @@
 
 (setq custom-file "~/.emacs-custom.el")
 (load custom-file)
+
+
+;;;; -----
+;;;; Own function lib
+
+(defun setpos (index fn lst)
+  "Applies fn to element at index in lst.
+  Returns a modified copy of lst."
+  (let ((m (- (length lst) index)))
+    (append (butlast lst m)
+            (list (funcall fn (nth index lst)))
+            (last lst (1- m)))))
+
+(defun nsetpos (index fn lst)
+  "Applies fn to element at index in lst.
+  lst is modified.
+  Returns value of fn application."
+  (setcar
+   (nthcdr index lst)
+   (funcall fn (nth index lst))))
+
+(defun inc-date-year (offset lst)
+  "Offsets year field in date list."
+  (nsetpos 5 (apply-partially '+ offset) lst))
+
+(defun inc-date-month (offset lst)
+  "Offsets month field in date list."
+  (nsetpos 4 (apply-partially '+ offset) lst))
+
+(defun inc-date-day (offset lst)
+  "Offsets day field in date list."
+  (nsetpos 3 (apply-partially '+ offset) lst))
+
+(defun insert-date-from-list (date-lst)
+  (org-insert-time-stamp (apply 'encode-time date-lst)))
+
+;; Insertion of "my studies" timestamps:
+;; Increasing time stamps from current date
+;; according to recommendations regarding repetition
+(defun org-my-custom-timestamp ()
+  (interactive)
+  (let ((date-lst (decode-time (current-time))))
+    (inc-date-day 1 date-lst)
+    (insert-date-from-list date-lst)
+    (inc-date-day 7 date-lst)
+    (insert-date-from-list date-lst)
+    (inc-date-month 1 date-lst)
+    (insert-date-from-list date-lst)
+    (inc-date-month 3 date-lst)
+    (insert-date-from-list date-lst)
+    (inc-date-month 6 date-lst)
+    (insert-date-from-list date-lst)
+    (inc-date-year 1 date-lst)
+    (insert-date-from-list date-lst)
+    (inc-date-year 2 date-lst)
+    (insert-date-from-list date-lst)))
+
+(add-hook 'org-mode-hook
+          (lambda ()
+            (local-set-key "\C-cq" 'org-my-custom-timestamp)))
+
