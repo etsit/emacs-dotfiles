@@ -5,6 +5,16 @@
 
 (require 'cl-lib)
 
+
+;;;; -----
+;;;; Encoding
+(prefer-coding-system       'utf-8)
+(set-default-coding-systems 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(setq default-buffer-file-coding-system 'utf-8)
+
+
 ;;;; -----
 ;;;; Scripts location
 
@@ -119,14 +129,14 @@
 (require 'evil)
 (evil-mode 1)
 
-;; Escape to normal mode by "jk" (using key-chord lib)
+;; Escape to normal mode by "kj" (using key-chord lib)
 (setq key-chord-two-keys-delay 0.5)
-(key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
+(key-chord-define evil-insert-state-map "kj" 'evil-normal-state)
 (key-chord-mode 1)
 
 ;; Relative line numbers
-(require 'linum-relative)
-(global-linum-mode t)
+;;(require 'linum-relative)
+;;(global-linum-mode t)
 
 ;;;; -----
 ;;;; Org mode package
@@ -166,7 +176,7 @@
         )
     )
 )
-(load-org-agenda-files-recursively "~/emacs-playground/" ) ; NOTE! trailing slash required
+(load-org-agenda-files-recursively "~/Dropbox/documents/todo/" ) ; NOTE! trailing slash required
 ;; To be able to refile to any file found add this:
 (setq org-refile-targets
       '((nil :maxlevel . 3)
@@ -178,6 +188,35 @@
 (setq org-clock-persist 'history)
 (org-clock-persistence-insinuate)
 
+;; Tags
+(setq org-tag-alist
+      '((:startgroup . nil)
+        ("@home" . ?a)
+        ("@skovde" . ?s)
+        ("@work" . ?w)
+        (:endgroup . nil)
+        ("me" . ?e)
+        ("mamma" . ?m)
+        ("pappa" . ?p)
+        ("jonas" . ?j)
+        ("josefine" . ?f)
+        ("noel" . ?n)
+        ("malva" . ?v)
+        ("lennox" . ?l)
+        ("mystudies" . ?y)
+        ("healthcare" . ?h)))
+
+;;; MobileOrg
+;; Set to the location of your Org files on your local system
+(setq org-directory "~/Dropbox/documents/todo")
+;; Set to the name of the file where new notes will be stored
+(setq org-mobile-inbox-for-pull "~/org/flagged.org")
+;; Set to <your Dropbox root directory>/MobileOrg.
+(setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
+;; Enable encryption
+(setq org-mobile-use-encryption t)
+;; Set a password
+(setq org-mobile-encryption-password "aberibapo")
 
 ;;;; -----
 ;;;; Powerline package
@@ -250,5 +289,5 @@
 
 (add-hook 'org-mode-hook
           (lambda ()
-            (local-set-key "\C-cq" 'org-my-custom-timestamp)))
+            (local-set-key "\C-ct" 'org-my-custom-timestamp)))
 
