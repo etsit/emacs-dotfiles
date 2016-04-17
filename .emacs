@@ -8,6 +8,7 @@
 
 ;;;; -----
 ;;;; Encoding
+
 (prefer-coding-system       'utf-8)
 (set-default-coding-systems 'utf-8)
 (set-terminal-coding-system 'utf-8)
@@ -205,18 +206,6 @@
         ("lennox" . ?l)
         ("mystudies" . ?y)
         ("healthcare" . ?h)))
-
-;;; MobileOrg
-;; Set to the location of your Org files on your local system
-(setq org-directory "~/Dropbox/documents/todo")
-;; Set to the name of the file where new notes will be stored
-(setq org-mobile-inbox-for-pull "~/org/flagged.org")
-;; Set to <your Dropbox root directory>/MobileOrg.
-(setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
-;; Enable encryption
-(setq org-mobile-use-encryption t)
-;; Set a password
-(setq org-mobile-encryption-password "aberibapo")
 
 ;;;; -----
 ;;;; Powerline package
