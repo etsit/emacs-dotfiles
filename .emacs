@@ -192,9 +192,14 @@
 ;; Tags
 (setq org-tag-alist
       '((:startgroup . nil)
-        ("@home" . ?a)
-        ("@skovde" . ?s)
-        ("@work" . ?w)
+        ("buy" . ?B)
+        ("healthcare" . ?H)
+        ("meta" . ?M)
+        (:endgroup . nil)
+        (:startgroup . nil)
+        ("@home" . ?O)
+        ("@skovde" . ?S)
+        ("@work" . ?W)
         (:endgroup . nil)
         ("me" . ?e)
         ("mamma" . ?m)
@@ -279,4 +284,10 @@
 (add-hook 'org-mode-hook
           (lambda ()
             (local-set-key "\C-ct" 'org-my-custom-timestamp)))
+
+;;;; -----
+;;;; Ido mode
+(require 'ido)
+(ido-mode t)
+(setq ido-enable-flex-matching t)
 
