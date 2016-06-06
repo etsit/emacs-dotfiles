@@ -280,3 +280,9 @@
           (lambda ()
             (local-set-key "\C-ct" 'org-my-custom-timestamp)))
 
+;;;; -----
+;;;; Ido mode
+(require 'ido)
+(ido-mode t)
+(setq ido-enable-flex-matching t)
+
