@@ -1,8 +1,10 @@
 ;; -*- lexical-binding: t -*-
 
+
 ;;;; -----
 ;;;; Libraries
 
+(require 'cl)
 (require 'cl-lib)
 
 
@@ -48,6 +50,7 @@
         coffee-mode
         elixir-mix
         elixir-mode
+        exec-path-from-shell ; Env vars from shell, e.g. PATH (i.e. access to shell cmds)
         evil
         evil-nerd-commenter
         evil-org
@@ -55,6 +58,7 @@
         gist
         goto-chg
         groovy-mode
+        helm-ag
         haml-mode
         haskell-mode
         inf-ruby
@@ -65,6 +69,7 @@
         markdown-mode
         ob-elixir
         org-ac
+        parse-time
         popup
         powerline
         powerline-evil
@@ -131,7 +136,7 @@
 (evil-mode 1)
 
 ;; Escape to normal mode by "kj" (using key-chord lib)
-(setq key-chord-two-keys-delay 0.5)
+(setq key-chord-two-keys-delay 0.15)
 (key-chord-define evil-insert-state-map "kj" 'evil-normal-state)
 (key-chord-mode 1)
 
@@ -199,7 +204,7 @@
         (:startgroup . nil)
         ("@home" . ?O)
         ("@skovde" . ?S)
-        ("@work" . ?W)
+        ("@work" . ?K)
         (:endgroup . nil)
         ("me" . ?e)
         ("mamma" . ?m)
@@ -209,8 +214,9 @@
         ("noel" . ?n)
         ("malva" . ?v)
         ("lennox" . ?l)
-        ("mystudies" . ?y)
-        ("healthcare" . ?h)))
+        ("waitingfor" . ?W)
+        ("mystudies" . ?Y)))
+
 
 ;;;; -----
 ;;;; Powerline package
@@ -227,67 +233,166 @@
 
 
 ;;;; -----
+;;;; curry-compose.el (partial)
+;;;; https://gist.github.com/eschulte/6167923
+
+(defsubst compose (function &rest more-functions)
+  (cl-reduce (lambda (f g)
+               (lexical-let ((f f) (g g))
+                            (lambda (&rest arguments)
+                              (funcall f (apply g arguments)))))
+             more-functions
+             :initial-value function))
+
+
+;;;; -----
 ;;;; Own function lib
 
 (defun setpos (index fn lst)
   "Applies fn to element at index in lst.
   Returns a modified copy of lst."
   (let ((m (- (length lst) index)))
-    (append (butlast lst m)
+    (append (copy-list (butlast lst m))
             (list (funcall fn (nth index lst)))
-            (last lst (1- m)))))
-
-(defun nsetpos (index fn lst)
-  "Applies fn to element at index in lst.
-  lst is modified.
-  Returns value of fn application."
-  (setcar
-   (nthcdr index lst)
-   (funcall fn (nth index lst))))
+            (copy-list (last lst (1- m))))))
 
 (defun inc-date-year (offset lst)
   "Offsets year field in date list."
-  (nsetpos 5 (apply-partially '+ offset) lst))
+  (setpos 5 (apply-partially #'+ offset) lst))
 
 (defun inc-date-month (offset lst)
   "Offsets month field in date list."
-  (nsetpos 4 (apply-partially '+ offset) lst))
+  (setpos 4 (apply-partially #'+ offset) lst))
 
 (defun inc-date-day (offset lst)
   "Offsets day field in date list."
-  (nsetpos 3 (apply-partially '+ offset) lst))
+  (setpos 3 (apply-partially #'+ offset) lst))
 
 (defun insert-date-from-list (date-lst)
-  (org-insert-time-stamp (apply 'encode-time date-lst)))
+  "Inserts a date in org-mode format at cursor position."
+  (progn
+    (message "%s" date-lst)
+    (org-insert-time-stamp (apply #'encode-time date-lst))))
 
-;; Insertion of "my studies" timestamps:
-;; Increasing time stamps from current date
-;; according to recommendations regarding repetition
-(defun org-my-custom-timestamp ()
+(defun merge-lists-prefer-first (l1 l2)
+  "Returns a new list with the same length as l1 and l2
+  where an element at position i is selected from the
+  corresponding position at l1 if it holds a non-nil value,
+  otherwise from l2 if non-nil, otherwise nil"
+  (cl-mapcar
+   (lambda (x y) (cond (x) (y)))
+   l1 l2))
+
+(defun parse-date-defaulting-to-current-time (date-string)
+  "Accepts a date string parameter parsed by parse-time-string,
+  positions with nil values are replaced by 0."
+  (merge-lists-prefer-first
+   (parse-time-string date-string)
+   (make-list 9 0)))
+
+(defun study-repetition-date-offset-funs ()
+  "Returns a list of functions that each accept a single argument:
+  a date list (of the format returned by encode-time). Each function
+  offsets the date according to best study repetition practices,
+  in order, respectivelly:
+  - x1: 1 day after argument
+  - x2: 7 days after x1
+  - x3: 1 month after x2
+  - x4: 3 months after x3
+  - x5: 6 months after x4
+  - x6: 1 year after x5
+  - x7: 2 years after x6.
+  Note that the functions will modify the date list in a manner that
+  may increase positions over their proper values, e.g. a month value
+  exceeding 11. When a date is encoded by e.g. encode-time, this will
+  be adjusted for."
+  (nreverse (cl-maplist (lambda (fs) (apply #'compose fs))
+              (list (apply-partially #'inc-date-year 2)
+                    (apply-partially #'inc-date-year 1)
+                    (apply-partially #'inc-date-month 6)
+                    (apply-partially #'inc-date-month 3)
+                    (apply-partially #'inc-date-month 1)
+                    (apply-partially #'inc-date-day 7)
+                    (apply-partially #'inc-date-day 1)))))
+
+(cl-defun study-repetition-dates (&optional (first-learning-date (decode-time (current-time))))
+  "Returns study repetition dates in the date list format
+  as returned by decode-time. For descriptions of which dates,
+  see documentation string of study-repetition-date-offset-funs.
+  If no value is passed for first-learning-date, current-time is used."
+  (cl-mapcar
+   (lambda (f) (funcall f first-learning-date))
+   (study-repetition-date-offset-funs)))
+
+(defun org-insert-study-repetition-dates-from-now ()
+  "Insertion of \"my studies\" timestamps:
+  Increasing time stamps from current date
+  according to recommendations regarding repetition"
   (interactive)
-  (let ((date-lst (decode-time (current-time))))
-    (inc-date-day 1 date-lst)
-    (insert-date-from-list date-lst)
-    (inc-date-day 7 date-lst)
-    (insert-date-from-list date-lst)
-    (inc-date-month 1 date-lst)
-    (insert-date-from-list date-lst)
-    (inc-date-month 3 date-lst)
-    (insert-date-from-list date-lst)
-    (inc-date-month 6 date-lst)
-    (insert-date-from-list date-lst)
-    (inc-date-year 1 date-lst)
-    (insert-date-from-list date-lst)
-    (inc-date-year 2 date-lst)
-    (insert-date-from-list date-lst)))
+  (cl-loop for d in (study-repetition-dates)
+           do (insert-date-from-list d)))
+
+(defun org-insert-study-repetition-dates-from-custom-date (date-text)
+  "Insertion of \"my studies\" timestamps:
+  Increasing time stamps from a provided date text string
+  according to recommendations regarding repetition"
+  (interactive "sEnter date: ")
+  (let ((date-lst (parse-date-defaulting-to-current-time date-text)))
+    (cl-loop for d in (study-repetition-dates date-lst)
+             do (insert-date-from-list d))))
 
 (add-hook 'org-mode-hook
           (lambda ()
-            (local-set-key "\C-ct" 'org-my-custom-timestamp)))
+            (local-set-key "\C-cy" 'org-insert-study-repetition-dates-from-now)))
+
+(add-hook 'org-mode-hook
+          (lambda ()
+            (local-set-key "\C-cu" 'org-insert-study-repetition-dates-from-custom-date)))
 
 ;;;; -----
 ;;;; Ido mode
 (require 'ido)
 (ido-mode t)
 (setq ido-enable-flex-matching t)
+
+
+;;;; -----
+;;;; helm-ag
+
+;; Interactive search
+(global-set-key (kbd "C-c h") 'helm-do-ag) 
+
+
+;;;; -----
+;;;; ielm
+
+; Auto complete
+(defun ielm-auto-complete ()
+  "Enables `auto-complete' support in \\[ielm]."
+  (setq ac-sources '(ac-source-functions
+                     ac-source-variables
+                     ac-source-features
+                     ac-source-symbols
+                     ac-source-words-in-same-mode-buffers))
+  (add-to-list 'ac-modes 'inferior-emacs-lisp-mode)
+  (auto-complete-mode 1))
+(add-hook 'ielm-mode-hook 'ielm-auto-complete)
+
+
+;;;; -----
+;;;; exec-path-from-shell
+
+(when (memq window-system '(mac ns))
+  (exec-path-from-shell-initialize))
+
+;;;; -----
+;;;; Startup
+
+;; Default directory
+(setq command-line-default-directory "~/Dropbox/documents/todo")
+
+;;; Set org mode on start
+;(pop-to-buffer (get-buffer-create (generate-new-buffer-name "*scratch-org*")))
+;(insert "Scratch buffer with org-mode.\n\n")
+;(org-mode)
 
