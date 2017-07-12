@@ -48,7 +48,6 @@
         auto-complete-pcmp
         clojure-mode
         coffee-mode
-        elixir-mix
         elixir-mode
         exec-path-from-shell ; Env vars from shell, e.g. PATH (i.e. access to shell cmds)
         evil
@@ -198,24 +197,28 @@
 (setq org-tag-alist
       '((:startgroup . nil)
         ("buy" . ?B)
-        ("healthcare" . ?H)
-        ("meta" . ?M)
         (:endgroup . nil)
         (:startgroup . nil)
         ("@home" . ?O)
         ("@skovde" . ?S)
         ("@work" . ?K)
         (:endgroup . nil)
+        ("christian" . ?c)
+        ("claes" . ?l)
+        ("olin" . ?o)
+        ("magnuse" . ?g)
+        ("iman" . ?i)
+        ("victor" . ?v)
         ("me" . ?e)
         ("mamma" . ?m)
         ("pappa" . ?p)
         ("jonas" . ?j)
         ("josefine" . ?f)
         ("noel" . ?n)
-        ("malva" . ?v)
+        ("malva" . ?a)
         ("lennox" . ?l)
-        ("waitingfor" . ?W)
-        ("mystudies" . ?Y)))
+        ("wf" . ?W)
+        ))
 
 
 ;;;; -----
@@ -223,6 +226,12 @@
 
 (require 'powerline)
 (powerline-default-theme)
+
+
+;;;; -----
+;;;; Color theme
+
+;(load-theme 'solarized-dark t)
 
 
 ;;;; -----
@@ -341,16 +350,26 @@
     (cl-loop for d in (study-repetition-dates date-lst)
              do (insert-date-from-list d))))
 
+
+;;;; -----
+;;;; org-mode
+
+;; My studies date insertions
 (add-hook 'org-mode-hook
           (lambda ()
             (local-set-key "\C-cy" 'org-insert-study-repetition-dates-from-now)))
-
 (add-hook 'org-mode-hook
           (lambda ()
             (local-set-key "\C-cu" 'org-insert-study-repetition-dates-from-custom-date)))
 
+;; Capture
+(setq org-default-notes-file (concat org-directory "/notes.org"))
+(define-key global-map "\C-cc" 'org-capture)
+
+
 ;;;; -----
 ;;;; Ido mode
+
 (require 'ido)
 (ido-mode t)
 (setq ido-enable-flex-matching t)
