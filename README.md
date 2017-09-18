@@ -9,14 +9,16 @@ Installation
 git clone https://github.com/etsit/emacs-dotfiles
 ```
 
-### On Linux / OS X
+### On Linux / MacOS
 ```
-ln -sv emacs-dotfiles/.emacs ~/.emacs
+ln -sv ~/emacs-dotfiles/.emacs ~/.emacs
+touch ~/.emacs-custom.el
+mkdir ~/.emacs-d
 ```
 
 ### On Windows
-1. Copy emacs-dotfiles\.emacs to your user's home folder
-2. Set HOME environment variable to point to your user's home folder
+- Copy emacs-dotfiles\.emacs to your user's home folder
+- Set HOME environment variable to point to your user's home folder
 
 ### Adjust the following settings to your system and preferences
 - Scripts location: default-directory 
@@ -25,6 +27,9 @@ ln -sv emacs-dotfiles/.emacs ~/.emacs
   - set-frame-position
 - Packages to install on start-up
   - Package config: prelude-packages
+- Paths to
+  - Org-mode agenda files folder: look for 'load-org-agenda-files-recursively'
+  - Default directory: look for 'command-line-default-directory'
 
 Start Emacs and wait for packages to be downloaded, compiled and
 installed on initial launch.
