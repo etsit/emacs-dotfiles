@@ -18,7 +18,10 @@ Cursor shall be placed he%?re
 Clipboard: %x
 Tags: %^G
 %^{hej|first|second}
-From prompt: %\\\\1")))))
+From prompt: %\\\\1"))))
+ '(package-selected-packages
+   (quote
+    (yaml-mode web-mode unbound solarized-theme scss-mode sass-mode powerline-evil powerline org-ac ob-elixir markdown-mode magit linum-relative key-chord inf-ruby haskell-mode haml-mode helm-ag groovy-mode gist evil-tutor evil-org evil-nerd-commenter evil exec-path-from-shell coffee-mode clojure-mode auto-complete-pcmp alchemist auto-complete))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

@@ -49,11 +49,12 @@
         clojure-mode
         coffee-mode
         elixir-mode
-        exec-path-from-shell ; Env vars from shell, e.g. PATH (i.e. access to shell cmds)
+        elm-mode
         evil
         evil-nerd-commenter
         evil-org
         evil-tutor
+        exec-path-from-shell ; Env vars from shell, e.g. PATH (i.e. access to shell cmds)
         gist
         goto-chg
         groovy-mode
@@ -135,9 +136,9 @@
 (evil-mode 1)
 
 ;; Escape to normal mode by "kj" (using key-chord lib)
-(setq key-chord-two-keys-delay 0.15)
-(key-chord-define evil-insert-state-map "kj" 'evil-normal-state)
-(key-chord-mode 1)
+;(setq key-chord-two-keys-delay 0.15)
+;(key-chord-define evil-insert-state-map "kj" 'evil-normal-state)
+;(key-chord-mode 1)
 
 ;; Relative line numbers
 ;;(require 'linum-relative)
@@ -181,7 +182,7 @@
         )
     )
 )
-(load-org-agenda-files-recursively "~/Dropbox/documents/todo/" ) ; NOTE! trailing slash required
+(load-org-agenda-files-recursively "~/Dropbox/archive-my-stuff/documents/todo/" ) ; NOTE! trailing slash required
 ;; To be able to refile to any file found add this:
 (setq org-refile-targets
       '((nil :maxlevel . 3)
@@ -408,7 +409,7 @@
 ;;;; Startup
 
 ;; Default directory
-(setq command-line-default-directory "~/Dropbox/documents/todo")
+(setq command-line-default-directory "~/Dropbox/archive-my-stuff/documents/todo")
 
 ;;; Set org mode on start
 ;(pop-to-buffer (get-buffer-create (generate-new-buffer-name "*scratch-org*")))
