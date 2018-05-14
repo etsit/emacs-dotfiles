@@ -182,8 +182,7 @@
         )
     )
 )
-; TODO: Add path to your directory with agenda files. NOTE! trailing slash required
-(load-org-agenda-files-recursively ".............../" ) 
+(load-org-agenda-files-recursively "~/Dropbox/work-tyri/" ) ; NOTE! trailing slash required
 ;; To be able to refile to any file found add this:
 (setq org-refile-targets
       '((nil :maxlevel . 3)
@@ -410,8 +409,7 @@
 ;;;; Startup
 
 ;; Default directory
-; TODO: Set your default directory
-(setq command-line-default-directory "...............")
+(setq command-line-default-directory "~/Dropbox/work-tyri")
 
 ;;; Set org mode on start
 ;(pop-to-buffer (get-buffer-create (generate-new-buffer-name "*scratch-org*")))
