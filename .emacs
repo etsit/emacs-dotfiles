@@ -119,8 +119,8 @@
 ; (global-visual-line-mode 1) ; 1 for on, 0 for off.
 
 ;; Window size and position
-(when window-system (set-frame-size (selected-frame) 120 60))
-(when window-system (set-frame-position (selected-frame) 550 75))
+(when window-system (set-frame-size (selected-frame) 200 60))
+(when window-system (set-frame-position (selected-frame) 250 75))
 ;(when window-system (set-frame-size (selected-frame) 120 50))
 ;(when window-system (set-frame-position (selected-frame) 500 50))
 
@@ -182,7 +182,7 @@
         )
     )
 )
-(load-org-agenda-files-recursively "~/Dropbox/archive-my-stuff/documents/todo/" ) ; NOTE! trailing slash required
+(load-org-agenda-files-recursively "~/Dropbox/org-emacs/" ) ; NOTE! trailing slash required
 ;; To be able to refile to any file found add this:
 (setq org-refile-targets
       '((nil :maxlevel . 3)
@@ -232,7 +232,7 @@
 ;;;; -----
 ;;;; Color theme
 
-;(load-theme 'solarized-dark t)
+(load-theme 'solarized-dark t)
 
 
 ;;;; -----
@@ -409,7 +409,7 @@
 ;;;; Startup
 
 ;; Default directory
-(setq command-line-default-directory "~/Dropbox/archive-my-stuff/documents/todo")
+(setq command-line-default-directory "~/Dropbox/org-emacs")
 
 ;;; Set org mode on start
 ;(pop-to-buffer (get-buffer-create (generate-new-buffer-name "*scratch-org*")))
