@@ -121,8 +121,6 @@
 ;; Window size and position
 (when window-system (set-frame-size (selected-frame) 200 60))
 (when window-system (set-frame-position (selected-frame) 250 75))
-;(when window-system (set-frame-size (selected-frame) 120 50))
-;(when window-system (set-frame-position (selected-frame) 500 50))
 
 ;; Don't open new frame (window)
 (setq ns-pop-up-frames nil)
